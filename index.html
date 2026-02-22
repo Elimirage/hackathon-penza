@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хакатон Алгоритмика Пенза 2026 · перекличка</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f8f1ff 0%, #f2e6ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* шапка в фиолетово-желтых тонах */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6b2f8b 0%, #9f4dbf 50%, #ffb347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 12px rgba(147, 64, 196, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #4a2b6e;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-total {
+            background: #ffdb9d;
+            color: #4a2b6e;
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(106, 27, 154, 0.15);
+            border: 1px solid #ffcd7e;
+        }
+
+        /* вкладки направлений (без "все команды") */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 2rem 0 2.2rem 0;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid #c8a7e0;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #4a2b6e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 12px rgba(126, 50, 178, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn i {
+            font-size: 1.1rem;
+            color: #9f4dbf;
+        }
+
+        .tab-btn.active {
+            background: #7e3bb0;
+            border-color: #ffb347;
+            color: white;
+            box-shadow: 0 12px 20px -8px #7e3bb0;
+        }
+
+        .tab-btn.active i {
+            color: #ffdb9d;
+        }
+
+        /* сетка команд */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+
+        /* карточка команды в фиолетово-желтой гамме */
+        .team-card {
+            background: linear-gradient(145deg, #ffffff, #fcf4ff);
+            border-radius: 28px;
+            padding: 1.5rem 1.3rem 1.3rem 1.3rem;
+            box-shadow: 0 20px 30px -10px rgba(106, 27, 154, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 2px solid #ffb347;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 35px -12px #8031c7;
+            border-color: #7e3bb0;
+        }
+
+        .team-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border-bottom: 2px dashed #d9b0ff;
+            padding-bottom: 0.7rem;
+        }
+
+        .team-name {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #4a2b6e;
+            letter-spacing: -0.3px;
+            word-break: break-word;
+            max-width: 75%;
+        }
+
+        .team-direction {
+            background: #ffdca8;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #5f2d8f;
+            white-space: nowrap;
+            border: 1px solid #ffb347;
+        }
+
+        .members-list {
+            list-style: none;
+            margin: 0.5rem 0 0.8rem 0;
+            flex: 1;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.3rem 0.6rem 1rem;
+            border-radius: 40px;
+            margin: 0.2rem 0;
+            background: #f5eaff;
+            transition: background 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .member-item:hover {
+            background: #eddafe;
+            border-color: #d5aaff;
+        }
+
+        .member-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #311b4b;
+            word-break: break-word;
+            padding-right: 8px;
+        }
+
+        .check-btn {
+            background: white;
+            border: 2px solid #b180d6;
+            color: #b180d6;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .check-btn.checked {
+            background: #ffb347;
+            border-color: #ffb347;
+            color: #4a2b6e;
+            box-shadow: 0 6px 12px rgba(255, 180, 71, 0.4);
+        }
+
+        .team-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 2px solid #f0d5ff;
+        }
+
+        .counter-badge {
+            background: #ffdb9d;
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #4a2b6e;
+            border: 1px solid #ffb347;
+            box-shadow: 0 2px 8px rgba(255, 180, 71, 0.3);
+        }
+
+        .counter-badge i {
+            margin-right: 6px;
+            color: #7e3bb0;
+        }
+
+        /* легенда */
+        .legend {
+            color: #4a2b6e;
+            background: #ffdb9d;
+            border-radius: 60px;
+            padding: 0.5rem 2rem;
+            display: inline-block;
+            margin: 2.5rem auto 0;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #ffb347;
+            box-shadow: 0 6px 14px rgba(156, 70, 216, 0.2);
+        }
+
+        .legend i {
+            color: #7e3bb0;
+            margin-right: 8px;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #6b2f8b;
+            grid-column: 1 / -1;
+            padding: 3rem;
+            background: #ffeac2;
+            border-radius: 60px;
+            border: 2px dashed #ffb347;
+        }
+
+        @media (max-width: 500px) {
+            .header h1 { font-size: 2.2rem; }
+            .header h2 { font-size: 1.4rem; }
+            .tabs { gap: 0.5rem; }
+            .tab-btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🚀 ХАКАТОН АЛГОРИТМИКА ПЕНЗА 2026</h1>
+        <h2>
+            <span class="badge-total"><i class="fas fa-users"></i> 49 команд · найди себя</span>
+            <span class="badge-total"><i class="fas fa-check-circle"></i> отметься галочкой</span>
+        </h2>
+    </div>
+
+    <!-- Вкладки только с направлениями (без "Все команды") -->
+    <div class="tabs" id="categoryTabs">
+        <button class="tab-btn active" data-category="scratch-start"><i class="fas fa-puzzle-piece"></i> Scratch Start</button>
+        <button class="tab-btn" data-category="scratch-pro"><i class="fas fa-code"></i> Scratch Pro</button>
+        <button class="tab-btn" data-category="design-pro"><i class="fas fa-pen-fancy"></i> Design Pro</button>
+        <button class="tab-btn" data-category="python-start"><i class="fab fa-python"></i> Python Start</button>
+        <button class="tab-btn" data-category="python-advanced"><i class="fas fa-rocket"></i> Python Advanced</button>
+    </div>
+
+    <!-- Контейнер для карточек команд -->
+    <div id="teamsContainer" class="teams-grid"></div>
+
+    <div class="legend">
+        <i class="fas fa-check-circle"></i> кликни по кружку — галочка останется. Данные сохраняются в браузере.
+    </div>
+</div>
+
+<script>
+(function() {
+    // ---------- ПОЛНЫЙ СПИСОК КОМАНД (49 штук, уже без отчеств!) ----------
+    const teamsData = [
+        // Scratch Start (SS) — убраны отчества
+        { name: "Юные хакеры", direction: "SS", category: "scratch-start", members: ["Макаров Тимофей","Агеев Артем","Шкитов Владимир","Бегаев Глеб","Кислов Максим"] },
+        { name: "Вечные циклы", direction: "SS", category: "scratch-start", members: ["Архипов Матвей","Павлова Елизавета","Козленко Федор"] },
+        { name: "Стражи алгоритмов", direction: "SS", category: "scratch-start", members: ["Калиганов Илья","Барышев Максим","Ростягайло Никита","Сликин Иван","Шапоров Константин"] },
+        { name: "Милки вей", direction: "SS", category: "scratch-start", members: ["Пяткова Ева","Николайчев Арсений","Тюгаев Александр","Чепелевский Марк"] },
+        { name: "Virtual Creators", direction: "SS", category: "scratch-start", members: ["Клюев Илья","Шаронов Дмитрий","Маглеев Эльдар","Лучинкин Дмитрий"] },
+        { name: "Улётный движ", direction: "SS", category: "scratch-start", members: ["Амурская Ксения","Царёв Артем","Макарова Варвара","Внук-Карпов Николай"] },
+        { name: "Кузнецк пока нет", direction: "SS", category: "scratch-start", members: ["Воеков Давид","Кошкин Сергей","Лопатинский Степан","Тезенин Глеб","Теплов Матвей"] },
+        { name: "Победители", direction: "SS", category: "scratch-start", members: ["Надеев Максим","Яшин Михаил","Макеев Матвей","Молянов Даниил"] },
+        
+        // Scratch Pro (SP) — без отчеств
+        { name: "Сверхнова", direction: "SP", category: "scratch-pro", members: ["Жулев Борис","Желудов Александр","Краюхин Кирилл","Уткина Алиса","Коновалова Елизавета"] },
+        { name: "Алгохакеры", direction: "SP", category: "scratch-pro", members: ["Балашов Назар","Ключников Климентий","Милованов Дмитрий","Муштаков Вячеслав","Зимин Харитон","Андреев Александр"] },
+        { name: "ScratchBall", direction: "SP", category: "scratch-pro", members: ["Ледяев Данила","Ивашин Матвей","Пизаев Константин","Решетников Родион","Чиркин Даниил"] },
+        { name: "Scrath-еры", direction: "SP", category: "scratch-pro", members: ["Цыганкин Тимофей","Малышев Егор","Пивцов Никита","Сошников Никита"] },
+        { name: "КВАНТУМ ПРО", direction: "SP", category: "scratch-pro", members: ["Бардин Тимур","Комаров Гордей","Каняев Артём","Олереску Алекс","Евдокимова Кристина"] },
+
+        // Design Pro (дизайн-команды, все без отчеств)
+        { name: "Кот в мешке", direction: "Дизайн старт", category: "design-pro", members: ["Боромыченко Екатерина","Макушкина Юлиана"] },
+        { name: "Незнакомцы", direction: "Дизайн старт", category: "design-pro", members: ["Волкова Ксения","Сафронова Екатерина","Тришина Анна"] },
+        { name: "АРТ - КВАНТУМ", direction: "Дизайн старт", category: "design-pro", members: ["Наталья Усова","Анастасия Красникова","Агата Болдырева"] },
+        { name: "Двойной эскиз", direction: "Ds", category: "design-pro", members: ["Корягина София","Калашникова Ярослава"] },
+        { name: "Я художник, я так вижу", direction: "Ds", category: "design-pro", members: ["Сякушев Тамерлан","Кочут Степан"] },
+        { name: "рабочее название", direction: "Дизайн старт", category: "design-pro", members: ["Константинова Евлалия","Вахрамеева София"] },
+        { name: "Gamesense", direction: "PA/Дизайн", category: "design-pro", members: ["Советкин Кирилл","Тесемникова Диана","Шишенков Артемий","Козленко Тимофей","Иванова Кристина"] },
+        { name: "Cyber Vultures", direction: "PA/Дизайн", category: "design-pro", members: ["Велякин Кирилл","Харченко Никита","Якупов Эльдар","Лепешкина Алиса","Клещева Анастасия"] },
+        { name: "WLVC (We love vibe coding)", direction: "PA/Дизайн", category: "design-pro", members: ["Шишкин Иван","Кан Полина","Голованов Артём","Игошин Константин","Черкасова Варвара"] },
+        { name: "Конкистадоры", direction: "PA/Дизайн", category: "design-pro", members: ["Вралушкин Данил","Горюнова Валерия","Ковалёв Вадим","Шабанова Дана","Шаповалова Ульяна"] },
+        { name: "Сырники", direction: "PA/Дизайн", category: "design-pro", members: ["Щеглов Владислав","Чемкаев Владислав","Костарева Варвара","Данилова Мирослава"] },
+        { name: "Manhattan Cafe", direction: "PA/Дизайн", category: "design-pro", members: ["Карамышев Сергей","Матюшин Владислав","Выползов Кирилл","Панов Петр","Хопёрская Александра"] },
+        { name: "ООПтимисты", direction: "PA/Дизайн", category: "design-pro", members: ["Коломбет Евгения","Фомин Андрей","Абросимова Варвара","Скрябин Егор"] },
+        { name: "ОПТИМА", direction: "PA/Дизайн", category: "design-pro", members: ["Шахин Александр","Поляков Дмитрий","Камнев Егор","Францев Александр","Хохлова Елизавета"] },
+        { name: "VIPit", direction: "PA/Дизайн", category: "design-pro", members: ["Филенков Антон","Терехин Ярослав","Немушев Камиль","Терешина Анастасия","Галдина Елена"] },
+        { name: "Victorious", direction: "PA/Дизайн", category: "design-pro", members: ["Григорькин Роман","Балашов Всеволод","Гулин Кирилл","Трубицына Дарья","Елисеева Елизавета"] },
+        { name: "Павел Воля", direction: "PA/Дизайн", category: "design-pro", members: ["Ратников Дмитрий","Макарова Анна","Кожевников Александр","Елисеев Данила","Прякина Екатерина"] },
+        { name: "Знаний.нет", direction: "PA/Дизайн", category: "design-pro", members: ["Кучерова Анна","Нестеренко Виктория","Яшин Матвей","Павлов Артем"] },
+        { name: "Json.убийцы", direction: "PA/Дизайн", category: "design-pro", members: ["Груздов Дмитрий","Ежжижанский Иван","Синицын Ярослав","Прокофьев Егор"] },
+        { name: "ПОка нет", direction: "PA/Дизайн", category: "design-pro", members: ["Даянов Амир","Устинов Артур","Фролова Валерия","Мамонова Кира"] },
+        { name: "PyTeam Studio", direction: "PA/Дизайн", category: "design-pro", members: ["Вохрамеев Ярослав","Кузнецов Дмитрий","Смельский Ростислав","Юдин Егор","Скрягина Алена"] },
+
+        // Python Start (PS) — без отчеств
+        { name: "Крутая банда", direction: "PS", category: "python-start", members: ["Попов Глеб","Корнилова Алёна","Сапожников Олег","Удалова Валерия"] },
+        { name: "Тон-Питон", direction: "PS", category: "python-start", members: ["Жешко Валерия","Рахимов Ильяс","Забродин Илья"] },
+        { name: "Метеостанция", direction: "PS", category: "python-start", members: ["Юранов Максим","Афонин Александр","Королёв Филипп"] },
+        { name: "Capybara Team", direction: "PS", category: "python-start", members: ["Крюков Сергей","Мукосеев Семен","Семиков Артем"] },
+        { name: "Коты Шрёдингера", direction: "PS", category: "python-start", members: ["Кузнецов Артем","Дуденков Максим","Юлгушев Амир"] },
+        { name: "БайтБанда", direction: "PS", category: "python-start", members: ["Баканов Андрей","Ивкин Андрей","Осипова Алена","Рамзаева Ксения"] },
+        { name: "Game forge", direction: "PS", category: "python-start", members: ["Старцев Павел","Гудков Кирилл","Каузов Даниил","Карпова Яна","Громиков Олег"] },
+        { name: "Bad input", direction: "PS", category: "python-start", members: ["Филиппов Андрей","Коннов Павел","Деготьков Максим","Папшев Илья","Павлов Егор"] },
+        { name: "НЕТ НАЗВАНИЯ (1)", direction: "PS", category: "python-start", members: ["Биктимиров Данияр","Тутаев Дамир","Солянов Павел","Бараненков Глеб"] },
+        { name: "НЕТ НАЗВАНИЯ (2)", direction: "PS", category: "python-start", members: ["Уваров Степан","Кузьмичёв Матвей","Митянин Арсений","Бадеев Севастьян"] },
+
+        // Python Advanced (PA) — все без отчеств
+        { name: "IT QUEENS", direction: "PA", category: "python-advanced", members: ["Блинов Валерий","Паршин Матвей","Ростягайло Дмитрий","Громиков Владислав"] },
+        { name: "Интердисциплинарно-коллективно-синтегрированная-междисциплинарная-суперкоманда", direction: "PA", category: "python-advanced", members: ["Морозов Николай","Бубнов Даниил","Павлов Нил","Зонов Максим","Куроедов Михаил"] },
+        { name: "Саранские ослы", direction: "PA", category: "python-advanced", members: ["Дегтярев Даниил","Песцов Захар","Кургузскин Александр"] },
+        { name: "Begemot Team", direction: "PA", category: "python-advanced", members: ["Захаров Тимофей","Поляков Антон","Трусов Александр","Шуков Никита"] },
+        { name: "Rettero", direction: "PA", category: "python-advanced", members: ["Кузьмин Иван","Власов Сильвестр","Плехов Савелий"] },
+    ];
+
+    // Хранилище отметок
+    const STORAGE_KEY = 'hackathon2026_checks';
+    let checkedState = {};
+
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) checkedState = JSON.parse(saved) || {};
+    } catch (e) {}
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState));
+    }
+
+    function makeKey(teamName, memberName) {
+        return `${teamName}||${memberName}`.replace(/\s+/g, ' ').trim();
+    }
+
+    // Переключение отметки
+    function toggleMember(teamName, memberName, btnEl) {
+        const key = makeKey(teamName, memberName);
+        checkedState[key] = !checkedState[key];
+        if (checkedState[key]) btnEl.classList.add('checked');
+        else btnEl.classList.remove('checked');
+        updateCounterForTeam(teamName);
+        saveState();
+    }
+
+    // Обновить счётчик команды
+    function updateCounterForTeam(teamName) {
+        const teamCard = document.getElementById(`team-${slugify(teamName)}`);
+        if (!teamCard) return;
+        const team = teamsData.find(t => t.name === teamName);
+        if (!team) return;
+        const cnt = team.members.filter(m => checkedState[makeKey(teamName, m)] === true).length;
+        const span = teamCard.querySelector('.counter-number');
+        if (span) span.textContent = `${cnt}/${team.members.length}`;
+    }
+
+    function slugify(t) {
+        return t.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_').substring(0, 50);
+    }
+
+    // Активная категория (по умолчанию Scratch Start)
+    let activeCategory = 'scratch-start';
+
+    // Фильтрация команд по категории
+    function getFilteredTeams() {
+        return teamsData.filter(t => t.category === activeCategory);
+    }
+
+    // Рендер
+    function renderTeams() {
+        const container = document.getElementById('teamsContainer');
+        const filtered = getFilteredTeams();
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty-message">✨ В этой категории пока нет команд</div>';
+            return;
+        }
+
+        let html = '';
+        filtered.forEach(team => {
+            const teamId = `team-${slugify(team.name)}`;
+            const checkedCount = team.members.filter(m => checkedState[makeKey(team.name, m)] === true).length;
+            const total = team.members.length;
+
+            let membersHtml = '';
+            team.members.forEach(member => {
+                const key = makeKey(team.name, member);
+                const isChecked = checkedState[key] === true;
+                membersHtml += `
+                    <li class="member-item">
+                        <span class="member-name">${member}</span>
+                        <span class="check-btn ${isChecked ? 'checked' : ''}" data-team="${team.name.replace(/"/g, '&quot;')}" data-member="${member.replace(/"/g, '&quot;')}" role="button" tabindex="0"><i class="fas fa-check"></i></span>
+                    </li>
+                `;
+            });
+
+            html += `
+                <div class="team-card" id="${teamId}">
+                    <div class="team-header">
+                        <span class="team-name">${team.name}</span>
+                        <span class="team-direction">${team.direction}</span>
+                    </div>
+                    <ul class="members-list">
+                        ${membersHtml}
+                    </ul>
+                    <div class="team-footer">
+                        <span class="counter-badge"><i class="fas fa-user-check"></i> <span class="counter-number">${checkedCount}/${total}</span></span>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+        // Обработчики на кнопки-галочки
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const team = btn.dataset.team;
+                const member = btn.dataset.member;
+                if (team && member) toggleMember(team, member, btn);
+            });
+            btn.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.click(); });
+        });
+    }
+
+    // Переключение вкладок
+    function initTabs() {
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeCategory = tab.dataset.category;
+                renderTeams();
+            });
+        });
+    }
+
+    // Старт
+    renderTeams();
+    initTabs();
+})();
+</script>
+</body>
+</html>
